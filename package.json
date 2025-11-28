@@ -10,7 +10,8 @@
     "index.d.ts",
     "src",
     "android",
-    "ios"
+    "ios",
+    "react-native-codepush.podspec"
   ],
   "scripts": {
     "test": "jest"
