@@ -37,13 +37,13 @@ Import the component:
 import CodePushUpdateAlert from '@daffodilsw/react-native-codepush';
 
 otaConfig = {
-   otaVersion: 1,
-    immediate: true/false,
+   otaVersion: 1, 
+    immediate: true/false, // set true if you want to reflect changes immediately.
     content: {
       "title": "Update Popup Title",  
       "description": "Update Popup Description"
     },
-    BUNDLE_URL: CODEPUSH_URL,  // this should be public url of your bundle directory
+    BUNDLE_URL: CODEPUSH_URL,  // this should be public url of your bundle directory. https://your-bucket/ota/
     button: {
         download: "Download Update",
         downloading:'Downloading',
@@ -111,4 +111,9 @@ Naming Convention for Android:
 ## iOS:
 - ios-{versionName}-{otaVersion}.zip -> ios-1.0-1.zip
 
-Upload ZIP to your public bucket:
+Upload ZIP to your public bucket // https://your-bucket/ota/filename.zip
+Example:
+- android:
+    - https://your-bucket/ota/android-1.0.1-1.zip
+- ios:
+    - https://your-bucket/ota/ios-1.1-1.zip
