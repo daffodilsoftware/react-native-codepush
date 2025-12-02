@@ -1,19 +1,18 @@
-@hrhk/react-native-codepush
+@daffodilsw/react-native-codepush
 
-# A lightweight OTA (Over-The-Air) update system for React Native, allowing you to update your JavaScript bundle instantly without         # publishing a new version to the Play Store or App Store.
+A lightweight OTA (Over-The-Air) update system for React Native, allowing you to update your JavaScript bundle instantly without publishing a new version to the Play Store or App Store.
 
 This library supports:
-Android
-iOS
+- Android and iOS both platform
 
-Firebase Remote Config
-S3/HTTPS bundle hosting
-Zero AppCenter dependency
-Customizable update modal
+- S3/HTTPS bundle hosting
+- Zero AppCenter dependency
+- Customizable update modal
 
 # 🛠 Getting Started
 
-# Note: This library assumes you already have a working React Native environment.
+Note: This library assumes you already have a working React Native environment.
+
 If not, follow the official guide:
 https://reactnative.dev/docs/set-up-your-environment
 
@@ -21,29 +20,30 @@ https://reactnative.dev/docs/set-up-your-environment
 
 Install the module using npm or yarn:
 
-# npm
-npm install @hrhk/react-native-codepush
+## npm
+npm install @daffodilsw/react-native-codepush
 
-# yarn
-yarn add @hrhk/react-native-codepush
+## yarn
+yarn add @daffodilsw/react-native-codepush
 
-# iOS Setup
-# From your iOS folder, install CocoaPods:
+## iOS Setup
+- From your iOS folder, install CocoaPods:
 cd ios
 pod install
 
-# 🚀 Usage
+## 🚀 Usage
 Import the component:
-import CodePushUpdateAlert from '@hrhk/react-native-codepush';
+```shell
+import CodePushUpdateAlert from '@daffodilsw/react-native-codepush';
 
-remoteConfig = {
+otaConfig = {
    otaVersion: 1,
     immediate: true/false,
     content: {
-      "title": "",
-      "description": ""
+      "title": "Update Popup Title",  
+      "description": "Update Popup Description"
     },
-    BUNDLE_URL: Config.CODEPUSH_URL,
+    BUNDLE_URL: CODEPUSH_URL,  // this should be public url of your bundle directory
     button: {
         download: "Download Update",
         downloading:'Downloading',
@@ -52,26 +52,26 @@ remoteConfig = {
     },
 }
 
-  if (remoteConfig?.otaVersion && remoteConfig?.otaVersion > 0) {
-    return <CodePushUpdateAlert otaConfig={remoteConfig} />;
+  if (otaConfig?.otaVersion && otaConfig?.otaVersion > 0) {
+    return <CodePushUpdateAlert otaConfig={otaConfig} />;
   }
+  ```
 
-#  📘 How OTA Works
 
-This library loads a downloaded bundle instead of the bundled JS from the APK/IPA.
-1. The app checks Firebase Remote Config
-2. If a newer OTA version exists:
-  i. Downloads ZIP from S3
- ii. Extracts JS bundle + assets
-iii. Saves them in local storage
-iv. Restarts the app using native module
- v. React Native loads the new bundle on next launch
+##  📘 How OTA Works
 
-# 📁 Generating OTA Bundles
-# Follow these steps every time you want to release a new JS-only OTA update.
+### If a newer OTA version exists:
+  - Downloads bundle ZIP from CODEPUSH_URL
+  - Extracts JS bundle + assets
+  - Saves them in local storage
+  - Restarts the app using native module
+  - React Native loads the new bundle on next launch
+
+## 📁 Generating OTA Bundles
+- Follow these steps every time you want to release a new JS-only OTA update.
 
 1️⃣ Generate Android Bundle:
-
+```shell
 npx react-native bundle \
   --platform android \
   --dev false \
@@ -80,13 +80,15 @@ npx react-native bundle \
   --assets-dest ./codepush/android/ota
 
   A folder will be created:
-  codepush/android/ota/
-  ├── index.android.bundle
-  └── drawable-xxxx/ 
-  └── raw/ 
+  - codepush/android/ota/
+  - ├── index.android.bundle
+  - └── drawable-xxxx/ 
+  - └── raw/ 
+  ```
 
   2️⃣ Generate iOS Bundle: 
 
+```shell
 npx react-native bundle \
   --platform ios \
   --dev false \
@@ -95,18 +97,18 @@ npx react-native bundle \
   --assets-dest ./codepush/ios/ota
 
   A folder will be created:
-  codepush/ios/ota/
-  ├── main.jsbundle
-  └── assets/
+  - codepush/ios/ota/
+  - ├── main.jsbundle
+  - └── assets/
+```
 
-
-  # 3️⃣ Prepare ZIP Files
+  ## 3️⃣ Prepare ZIP/Bundle Files
 
 Zip only the ota folder.
 Naming Convention for Android:
-# android-{versionName}-{otaVersion}.zip  -> android-1.0.1-1.zip
+- android-{versionName}-{otaVersion}.zip  -> android-1.0.1-1.zip
 
-# iOS:
-# ios-{versionName}-{otaVersion}.zip -> ios-1.0-1.zip
+## iOS:
+- ios-{versionName}-{otaVersion}.zip -> ios-1.0-1.zip
 
 Upload ZIP to your public bucket:
