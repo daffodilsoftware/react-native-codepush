@@ -104,8 +104,7 @@ npx react-native bundle \
 
   ## 3️⃣ Prepare ZIP/Bundle Files
 
-Zip only the ota folder.
-Naming Convention of bundle file.
+Please zip only the OTA folder and ensure the bundle file follows the correct naming convention.
 ### Android:
 - android-{versionName}-{otaVersion}.zip  -> android-1.0.1-1.zip
 
@@ -113,7 +112,7 @@ Naming Convention of bundle file.
 - ios-{versionName}-{otaVersion}.zip -> ios-1.0-1.zip
 
 ## Upload bundle to public bucket:
-Upload ZIP to your public bucket // https://your-bucket/ota/filename.zip
+Upload the ZIP file to your public bucket at: // https://your-bucket/ota/filename.zip
 Example:
 - android:
     - https://your-bucket/ota/android-1.0.1-1.zip
