@@ -1,4 +1,4 @@
-declare module "@hrhk/react-native-codepush" {
+declare module "@daffodilsw/react-native-codepush" {
   import * as React from "react";
 
   export interface CodePushUpdateAlertProps {
