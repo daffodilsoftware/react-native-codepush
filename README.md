@@ -111,6 +111,7 @@ Naming Convention for Android:
 ## iOS:
 - ios-{versionName}-{otaVersion}.zip -> ios-1.0-1.zip
 
+## Upload bundle to public bucket:
 Upload ZIP to your public bucket // https://your-bucket/ota/filename.zip
 Example:
 - android:
