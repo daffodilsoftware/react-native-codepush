@@ -1,6 +1,6 @@
 {
   "name": "@daffodilsw/react-native-codepush",
-  "version": "1.0.2",
+  "version": "1.0.20",
   "description": "Custom CodePush Handler",
   "main": "index.js",
   "react-native": "index.js",
