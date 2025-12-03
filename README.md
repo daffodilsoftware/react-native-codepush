@@ -118,3 +118,47 @@ Example:
     - https://your-bucket/ota/android-1.0.1-1.zip
 - ios:
     - https://your-bucket/ota/ios-1.1-1.zip
+
+## Serve new bundle on relaunch 
+## Anroid:
+### Update/add getJsbundleFile override method in MainApplication.kt
+```shell
+        // ✅ This is the key part
+        override fun getJSBundleFile(): String? {
+          val assetRoot = File(
+              applicationContext.filesDir,
+              "CodePush/unzipped/ota"
+          )
+            val updatedBundle = File(assetRoot, "index.android.bundle")
+          return if (updatedBundle.exists()) {
+            updatedBundle.absolutePath
+          } else {
+            super.getJSBundleFile()
+          }
+        }
+```
+
+## IOS:
+### Update/add bundleURL override method in AppDelegate.swift
+
+```shell
+// replace bundleURL() with
+
+  override func bundleURL() -> URL? {
+
+    let docsDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+    let otaBundlePath = "\(docsDir)/CodePush/unzipped/ota/main.jsbundle"
+    let otaExists = FileManager.default.fileExists(atPath: otaBundlePath)
+
+    if otaExists {
+      return URL(fileURLWithPath: otaBundlePath)
+    }
+
+    #if DEBUG
+      return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    #else
+      return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+    #endif
+  }
+
+```
