@@ -123,42 +123,37 @@ Example:
 ## Anroid:
 ### Update/add getJsbundleFile override method in MainApplication.kt
 ```shell
-        // ✅ This is the key part
-        override fun getJSBundleFile(): String? {
-          val assetRoot = File(
-              applicationContext.filesDir,
-              "CodePush/unzipped/ota"
-          )
-            val updatedBundle = File(assetRoot, "index.android.bundle")
-          return if (updatedBundle.exists()) {
-            updatedBundle.absolutePath
-          } else {
-            super.getJSBundleFile()
-          }
-        }
+import com.skcodepush.AppReloaderModule
+
+   override fun getJSBundleFile(): String? {
+        val path = AppReloaderModule.getBundlePathIfExistsSync(applicationContext)
+        return path ?: super.getJSBundleFile();
+    }
 ```
 
 ## IOS:
 ### Update/add bundleURL override method in AppDelegate.swift
 
 ```shell
-// replace bundleURL() with
+// update bundleURL() in AppDelegate.swift
 
   override func bundleURL() -> URL? {
 
-    let docsDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-    let otaBundlePath = "\(docsDir)/CodePush/unzipped/ota/main.jsbundle"
-    let otaExists = FileManager.default.fileExists(atPath: otaBundlePath)
-
-    if otaExists {
-      return URL(fileURLWithPath: otaBundlePath)
+  # check custom bundle
+    if let customPath = AppReloader.getBundlePathIfExistsSync() {
+      return URL(fileURLWithPath: customPath)
     }
-
+    
     #if DEBUG
       return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
     #else
       return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
     #endif
   }
+
+update:
+project_name-Bridging-Header.h
+#import "AppReloader.h"
+
 
 ```

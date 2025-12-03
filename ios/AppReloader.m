@@ -1,9 +1,6 @@
-#import <React/RCTBridgeModule.h>
+#import "AppReloader.h"
 #import <React/RCTLog.h>
 #import <React/RCTReloadCommand.h>
-
-@interface AppReloader : NSObject <RCTBridgeModule>
-@end
 
 @implementation AppReloader
 
@@ -13,6 +10,19 @@ RCT_EXPORT_METHOD(restartApp)
 {
   RCTLogInfo(@"[AppReloader] restartApp called");
   RCTTriggerReloadCommandListeners(@"user_initiated_restart");
+}
+
+// 🔥 Native sync method used by Swift on startup
++ (nullable NSString *)getBundlePathIfExistsSync
+{
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+  NSString *docs = paths.firstObject;
+  if (!docs) return nil;
+
+  NSString *otaPath = [docs stringByAppendingPathComponent:@"CodePush/unzipped/ota/main.jsbundle"];
+  BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:otaPath];
+
+  return exists ? otaPath : nil;
 }
 
 @end

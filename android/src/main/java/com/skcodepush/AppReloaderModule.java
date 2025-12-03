@@ -2,7 +2,8 @@ package com.skcodepush;
 
 import android.content.Intent;
 import android.os.Build;
-
+import java.io.File;
+import android.content.Context;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -19,6 +20,15 @@ public class AppReloaderModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return "AppReloader";
+    }
+
+public static String getBundlePathIfExistsSync(Context context) {
+        File bundle = new File(
+            context.getFilesDir(),
+            "CodePush/unzipped/ota/index.android.bundle"
+        );
+
+        return bundle.exists() ? bundle.getAbsolutePath() : null;
     }
 
     @ReactMethod
