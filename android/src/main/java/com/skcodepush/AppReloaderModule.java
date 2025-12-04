@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Build;
 import java.io.File;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import android.util.Log;
 
 public class AppReloaderModule extends ReactContextBaseJavaModule {
 
@@ -22,11 +24,25 @@ public class AppReloaderModule extends ReactContextBaseJavaModule {
         return "AppReloader";
     }
 
-public static String getBundlePathIfExistsSync(Context context) {
+    public static String getBundlePathIfExistsSync(Context context) {
+        String version = "";  
+        try {
+            version = context
+                .getPackageManager()
+                .getPackageInfo(context.getPackageName(), 0)
+                .versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        String relativePath = "CodePush/" + version + "/unzipped/ota/index.android.bundle";
         File bundle = new File(
             context.getFilesDir(),
-            "CodePush/unzipped/ota/index.android.bundle"
+            relativePath
         );
+        Log.d("CodePush relative path:",  relativePath);
+        Log.d("CodePush relative path:",  bundle.getAbsolutePath());
+        Log.d("CodePush relative path:",  bundle.exists()+"");
 
         return bundle.exists() ? bundle.getAbsolutePath() : null;
     }

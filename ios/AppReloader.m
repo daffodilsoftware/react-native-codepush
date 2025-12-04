@@ -19,7 +19,10 @@ RCT_EXPORT_METHOD(restartApp)
   NSString *docs = paths.firstObject;
   if (!docs) return nil;
 
-  NSString *otaPath = [docs stringByAppendingPathComponent:@"CodePush/unzipped/ota/main.jsbundle"];
+  NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+  NSString *relative = [NSString stringWithFormat:@"CodePush/%@/unzipped/ota/main.jsbundle", version];
+  NSString *otaPath = [docs stringByAppendingPathComponent:relative];
+  
   BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:otaPath];
 
   return exists ? otaPath : nil;

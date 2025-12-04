@@ -6,14 +6,6 @@ import { unzip } from 'react-native-zip-archive';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 
-// --- Base Paths ---
-const DEPLOY_DIR = `${RNFS.DocumentDirectoryPath}/CodePush`;
-const ZIP_PATH = `${DEPLOY_DIR}/update.zip`;
-const UNZIP_DIR = `${DEPLOY_DIR}/unzipped`;
-const bundleName = Platform.OS === 'android' ? 'index.android.bundle' : 'main.jsbundle';
-const bundlePath = `${UNZIP_DIR}/ota/${bundleName}`;
-
-//. >>>>>>>>>>>>>>>>>>>>>>>start update component ??????????>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 const CodePushUpdateAlert = (props) => {
   const {otaConfig} = props || {};
@@ -52,9 +44,10 @@ const CodePushUpdateAlert = (props) => {
         : `ios-${versionCode}-${otaVersion}.zip`;
     const downloadUrl = `${otaConfig.BUNDLE_URL}${filename}`;
     const fileExist = await fileExistsAtUrl(downloadUrl);
-
+    console.log("fileExist>>>>>>>", fileExist)
     if (fileExist) {
       const isLocalBundleSame = await checkIsLocalBundleSame(filename);
+       console.log("isLocalBundleSame>>>>>>>>>>", isLocalBundleSame)
       if (!isLocalBundleSame) {
         // show download popup
         setFilePath({ filename, downloadUrl });
@@ -74,6 +67,11 @@ const CodePushUpdateAlert = (props) => {
 
   const downloadUpdate = async () => {
     try {
+       const versionCode = await DeviceInfo.getVersion();
+      const DEPLOY_DIR = `${RNFS.DocumentDirectoryPath}/CodePush/${versionCode}`;
+      console.log("deploy_dir>>>>>>>", DEPLOY_DIR)
+      const ZIP_PATH = `${DEPLOY_DIR}/update.zip`;
+      const UNZIP_DIR = `${DEPLOY_DIR}/unzipped`;
       const { filename = '', downloadUrl = '' } = filePath || {};
 
       setButtonState(2); // downloading....
