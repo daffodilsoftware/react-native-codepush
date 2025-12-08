@@ -124,6 +124,7 @@ const CodePushUpdateAlert = (props) => {
         setUpdateAvailable(null);
       }
     } catch (error) {
+      console.error("codepush:", error);
       setUpdateAvailable(null);
       return error;
     }

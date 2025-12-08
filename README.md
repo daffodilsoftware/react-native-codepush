@@ -26,6 +26,17 @@ npm install @daffodilsw/react-native-codepush
 ## yarn
 yarn add @daffodilsw/react-native-codepush
 
+
+##peer dependency
+
+``` shell
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": ">=1.0.0",
+    "react-native-device-info": ">=10.0.0",
+    "react-native-zip-archive": ">=6.0.0"
+  },
+  ```
+
 ## iOS Setup
 - From your iOS folder, install CocoaPods:
 cd ios
