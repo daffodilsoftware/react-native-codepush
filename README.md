@@ -33,6 +33,7 @@ yarn add @daffodilsw/react-native-codepush
   "peerDependencies": {
     "@react-native-async-storage/async-storage": ">=1.0.0",
     "react-native-device-info": ">=10.0.0",
+    "react-native-fs": ">=2.20.0",
     "react-native-zip-archive": ">=6.0.0"
   },
   ```
