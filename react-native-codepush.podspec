@@ -19,4 +19,5 @@ Pod::Spec.new do |s|
 
   s.dependency "React-Core"
   s.dependency "React-CoreModules"
+  s.dependency 'SSZipArchive'
 end

@@ -135,10 +135,10 @@ Example:
 ## Anroid:
 ### Update/add getJsbundleFile override method in MainApplication.kt
 ```shell
-import com.skcodepush.AppReloaderModule
+import com.skcodepush.CodePushModule
 
    override fun getJSBundleFile(): String? {
-        val path = AppReloaderModule.getBundlePathIfExistsSync(applicationContext)
+        val path = CodePushModule.getBundlePathIfExistsSync(applicationContext)
         return path ?: super.getJSBundleFile();
     }
 ```
@@ -152,7 +152,7 @@ import com.skcodepush.AppReloaderModule
   override func bundleURL() -> URL? {
 
   # check custom bundle
-    if let customPath = AppReloader.getBundlePathIfExistsSync() {
+    if let customPath = CodePush.getBundlePathIfExistsSync() {
       return URL(fileURLWithPath: customPath)
     }
     
@@ -165,7 +165,7 @@ import com.skcodepush.AppReloaderModule
 
 update:
 project_name-Bridging-Header.h
-#import "AppReloader.h"
+#import "CodePush.h"
 
 
 ```

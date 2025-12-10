@@ -1,9 +1,5 @@
-import RNFS from 'react-native-fs';
 import { Image, Modal, Platform, StyleSheet, Text, View, NativeModules, TouchableOpacity } from 'react-native';
-const { AppReloader } = NativeModules;
-import DeviceInfo from 'react-native-device-info';
-import { unzip } from 'react-native-zip-archive';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+const { CodePush } = NativeModules;
 import { useEffect, useState } from 'react';
 
 
@@ -24,7 +20,8 @@ const CodePushUpdateAlert = (props) => {
   };
 
   const checkIsLocalBundleSame = async filename => {
-    const isBundleExist = await AsyncStorage.getItem(`otaVersion${Platform.OS}`);
+        const isBundleExist = await CodePush.getItem(`otaVersion${Platform.OS}`);
+        console.log('isBundleExists>>>>>>md', isBundleExist);
     if (isBundleExist === filename) {
       return true;
     }
@@ -33,8 +30,8 @@ const CodePushUpdateAlert = (props) => {
 
   const checkUpdate = async () => {
     // --- Version Info ---
-    const versionCode = await DeviceInfo.getVersion();
-    const build = await DeviceInfo.getBuildNumber();
+    const versionCode = await CodePush.getVersion();
+    const build = await CodePush.getBuildNumber();
     const version = `${versionCode}-${build}`;
     console.log('📱 Current App Version', version);
 
@@ -43,12 +40,12 @@ const CodePushUpdateAlert = (props) => {
         ? `android-${versionCode}-${otaVersion}.zip`
         : `ios-${versionCode}-${otaVersion}.zip`;
     const downloadUrl = `${otaConfig.BUNDLE_URL}${filename}`;
-    const fileExist = await fileExistsAtUrl(downloadUrl);
-    console.log("fileExist>>>>>>>", fileExist)
-    if (fileExist) {
-      const isLocalBundleSame = await checkIsLocalBundleSame(filename);
+       const isLocalBundleSame = await checkIsLocalBundleSame(filename);
        console.log("isLocalBundleSame>>>>>>>>>>", isLocalBundleSame)
-      if (!isLocalBundleSame) {
+    if (!isLocalBundleSame) {
+      const fileExist = await fileExistsAtUrl(downloadUrl);
+      console.log("fileExist>>>>>>>", fileExist)
+      if (fileExist) {
         // show download popup
         setFilePath({ filename, downloadUrl });
         setUpdateAvailable(true);
@@ -67,26 +64,28 @@ const CodePushUpdateAlert = (props) => {
 
   const downloadUpdate = async () => {
     try {
-       const versionCode = await DeviceInfo.getVersion();
-      const DEPLOY_DIR = `${RNFS.DocumentDirectoryPath}/CodePush/${versionCode}`;
+       const versionCode = await CodePush.getVersion();
+       const docPath = await CodePush.getDocumentsPath();
+       console.log("docPath>>>>>>>md", docPath);
+      const DEPLOY_DIR = `${docPath}/CodePush/${versionCode}`;
       console.log("deploy_dir>>>>>>>", DEPLOY_DIR)
       const ZIP_PATH = `${DEPLOY_DIR}/update.zip`;
       const UNZIP_DIR = `${DEPLOY_DIR}/unzipped`;
       const { filename = '', downloadUrl = '' } = filePath || {};
 
       setButtonState(2); // downloading....
-      const dirExists = await RNFS.exists(DEPLOY_DIR);
+      const dirExists = await CodePush.exists(DEPLOY_DIR);
 
       if (!dirExists) {
-        await RNFS.mkdir(DEPLOY_DIR);
+        await CodePush.mkdir(DEPLOY_DIR);
       }
 
       console.log('⬇️ Downloading update');
 
-      const downloadRes = await RNFS.downloadFile({
-        fromUrl: downloadUrl,
-        toFile: ZIP_PATH,
-      }).promise;
+      const downloadRes = await CodePush.downloadFile(
+       downloadUrl,
+        ZIP_PATH,
+      );
       console.log('✅ ZIP file downloaded');
 
       if (downloadRes.statusCode !== 200) {
@@ -97,26 +96,29 @@ const CodePushUpdateAlert = (props) => {
 
       setButtonState(3); // installing...
 
-      const zipExists = await RNFS.exists(ZIP_PATH);
+      const zipExists = await CodePush.exists(ZIP_PATH);
       console.log(zipExists ? "✅ ZIP file downloaded" : '❌ Missing ZIP file');
 
       // --- Clean previous unzipped folder ---
-      if (await RNFS.exists(UNZIP_DIR)) {
-        await RNFS.unlink(UNZIP_DIR);
+      if (await CodePush.exists(UNZIP_DIR)) {
+        await CodePush.unlink(UNZIP_DIR);
       }
 
-      await RNFS.mkdir(UNZIP_DIR);
+      await CodePush.mkdir(UNZIP_DIR);
 
-      const unzipRes = await unzip(ZIP_PATH, UNZIP_DIR);
+      const unzipRes = await CodePush.unzip(ZIP_PATH, UNZIP_DIR);
+      console.log("unzipRes>>>>>>>", unzipRes);
+      await CodePush.setItem(`otaVersion${Platform.OS}`,filename);
+        const isBundleExists = await CodePush.getItem(`otaVersion${Platform.OS}`);
+        console.log('isBundleExistsafterset>>>>>>', isBundleExists);
 
-      await AsyncStorage.setItem(`otaVersion${Platform.OS}`, filename);
-      await RNFS.unlink(ZIP_PATH);
+      await CodePush.unlink(ZIP_PATH);
       if(otaConfig?.immediate){
         setButtonState(4);
         setTimeout(() => {
           setUpdateAvailable(null);
           setTimeout(()=>{
-            AppReloader.restartApp();
+            CodePush.restartApp();
           },300)
         }, 1000);
       }
